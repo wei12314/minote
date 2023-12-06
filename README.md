@@ -1,0 +1,2 @@
+# minote
+software class homework
