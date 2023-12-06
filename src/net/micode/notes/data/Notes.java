@@ -18,8 +18,11 @@ package net.micode.notes.data;
 
 import android.net.Uri;
 public class Notes {
+    // Authority for content provider 
     public static final String AUTHORITY = "micode_notes";
+    // Tag for logging
     public static final String TAG = "Notes";
+    // Constants defining data types  
     public static final int TYPE_NOTE     = 0;
     public static final int TYPE_FOLDER   = 1;
     public static final int TYPE_SYSTEM   = 2;
@@ -35,17 +38,18 @@ public class Notes {
     public static final int ID_CALL_RECORD_FOLDER = -2;
     public static final int ID_TRASH_FOLER = -3;
 
+    // Intent extra keys 
     public static final String INTENT_EXTRA_ALERT_DATE = "net.micode.notes.alert_date";
     public static final String INTENT_EXTRA_BACKGROUND_ID = "net.micode.notes.background_color_id";
     public static final String INTENT_EXTRA_WIDGET_ID = "net.micode.notes.widget_id";
     public static final String INTENT_EXTRA_WIDGET_TYPE = "net.micode.notes.widget_type";
     public static final String INTENT_EXTRA_FOLDER_ID = "net.micode.notes.folder_id";
     public static final String INTENT_EXTRA_CALL_DATE = "net.micode.notes.call_date";
-
+    // Widget type constants 
     public static final int TYPE_WIDGET_INVALIDE      = -1;
     public static final int TYPE_WIDGET_2X            = 0;
     public static final int TYPE_WIDGET_4X            = 1;
-
+    // Inner class defining data constants 
     public static class DataConstants {
         public static final String NOTE = TextNote.CONTENT_ITEM_TYPE;
         public static final String CALL_NOTE = CallNote.CONTENT_ITEM_TYPE;
@@ -60,7 +64,7 @@ public class Notes {
      * Uri to query data
      */
     public static final Uri CONTENT_DATA_URI = Uri.parse("content://" + AUTHORITY + "/data");
-
+    // Interface defining note columns
     public interface NoteColumns {
         /**
          * The unique ID for a row

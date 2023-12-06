@@ -17,17 +17,17 @@
 package net.micode.notes.gtask.exception;
 
 public class NetworkFailureException extends Exception {
-    private static final long serialVersionUID = 2107610287180234136L;
+    private static final long serialVersionUID = 2107610287180234136L; // Serial version ID for serialization
 
-    public NetworkFailureException() {
-        super();
+    public NetworkFailureException() { // Constructor without parameters
+        super(); // Calls the constructor of the superclass (Exception)
     }
 
-    public NetworkFailureException(String paramString) {
-        super(paramString);
+    public NetworkFailureException(String paramString) { // Constructor with a string parameter
+        super(paramString); // Calls the constructor of the superclass (Exception) with a message
     }
 
-    public NetworkFailureException(String paramString, Throwable paramThrowable) {
-        super(paramString, paramThrowable);
+    public NetworkFailureException(String paramString, Throwable paramThrowable) { // Constructor with string and throwable parameters
+        super(paramString, paramThrowable); // Calls the constructor of the superclass (Exception) with a message and a throwable
     }
 }

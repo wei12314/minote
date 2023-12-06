@@ -39,10 +39,11 @@ import java.util.ArrayList;
 
 
 public class SqlNote {
+    // Declares a private constant 'TAG' to store the class's simple name
     private static final String TAG = SqlNote.class.getSimpleName();
-
+    // Declares a constant 'INVALID_ID' initialized with -99999
     private static final int INVALID_ID = -99999;
-
+    // Defines an array of strings 'PROJECTION_NOTE' for database column names
     public static final String[] PROJECTION_NOTE = new String[] {
             NoteColumns.ID, NoteColumns.ALERTED_DATE, NoteColumns.BG_COLOR_ID,
             NoteColumns.CREATED_DATE, NoteColumns.HAS_ATTACHMENT, NoteColumns.MODIFIED_DATE,
@@ -51,7 +52,7 @@ public class SqlNote {
             NoteColumns.LOCAL_MODIFIED, NoteColumns.ORIGIN_PARENT_ID, NoteColumns.GTASK_ID,
             NoteColumns.VERSION
     };
-
+    // Constants for column indices in the projection array
     public static final int ID_COLUMN = 0;
 
     public static final int ALERTED_DATE_COLUMN = 1;
@@ -86,6 +87,7 @@ public class SqlNote {
 
     public static final int VERSION_COLUMN = 16;
 
+    // Member variables representing note properties
     private Context mContext;
 
     private ContentResolver mContentResolver;
@@ -117,11 +119,11 @@ public class SqlNote {
     private long mOriginParent;
 
     private long mVersion;
-
+    // ContentValues to store differences in note values
     private ContentValues mDiffNoteValues;
-
+    // ArrayList to store SqlData objects related to this note
     private ArrayList<SqlData> mDataList;
-
+    // constructor of this class
     public SqlNote(Context context) {
         mContext = context;
         mContentResolver = context.getContentResolver();
@@ -167,25 +169,39 @@ public class SqlNote {
     }
 
     private void loadFromCursor(long id) {
+        // Declares and initializes a Cursor variable
         Cursor c = null;
         try {
-            c = mContentResolver.query(Notes.CONTENT_NOTE_URI, PROJECTION_NOTE, "(_id=?)",
-                    new String[] {
-                        String.valueOf(id)
-                    }, null);
+            // Queries the ContentResolver to retrieve data from the specified URI based on the 'id'
+            c = mContentResolver.query(
+                Notes.CONTENT_NOTE_URI,  // URI to query
+                PROJECTION_NOTE,         // Projection (list of columns to retrieve)
+                "(_id=?)",               // Selection criteria
+                new String[] {           // Selection arguments (the 'id')
+                    String.valueOf(id)
+                },
+                null                     // No group by
+            );
+
+            // Checks if the cursor is not null and moves to the first result
             if (c != null) {
                 c.moveToNext();
+                // Calls another method 'loadFromCursor' passing the Cursor as an argument
                 loadFromCursor(c);
             } else {
+                // Logs a warning if the cursor is null
                 Log.w(TAG, "loadFromCursor: cursor = null");
             }
         } finally {
+            // Ensures the Cursor is closed to release resources
             if (c != null)
                 c.close();
         }
     }
 
+
     private void loadFromCursor(Cursor c) {
+        // Retrieves values from the Cursor and assigns them to respective member variables
         mId = c.getLong(ID_COLUMN);
         mAlertDate = c.getLong(ALERTED_DATE_COLUMN);
         mBgColorId = c.getInt(BG_COLOR_ID_COLUMN);
@@ -201,26 +217,41 @@ public class SqlNote {
     }
 
     private void loadDataContent() {
+        // Initializes a Cursor variable
         Cursor c = null;
+        // Clears the existing list of SqlData objects
         mDataList.clear();
         try {
-            c = mContentResolver.query(Notes.CONTENT_DATA_URI, SqlData.PROJECTION_DATA,
-                    "(note_id=?)", new String[] {
-                        String.valueOf(mId)
-                    }, null);
+            // Queries the ContentResolver to retrieve data related to 'mId' from the CONTENT_DATA_URI
+            c = mContentResolver.query(
+                Notes.CONTENT_DATA_URI,      // URI to query
+                SqlData.PROJECTION_DATA,     // Projection (list of columns to retrieve)
+                "(note_id=?)",               // Selection criteria
+                new String[] {               // Selection arguments (the 'mId')
+                    String.valueOf(mId)
+                },
+                null                         // No group by
+            );
+
+            // Checks if the cursor is not null and has data
             if (c != null) {
                 if (c.getCount() == 0) {
-                    Log.w(TAG, "it seems that the note has not data");
+                    // Logs a warning if no data is found for the note
+                    Log.w(TAG, "it seems that the note has no data");
                     return;
                 }
+                // Iterates through the cursor results
                 while (c.moveToNext()) {
+                    // Creates a new SqlData object using data from the cursor and adds it to the list
                     SqlData data = new SqlData(mContext, c);
                     mDataList.add(data);
                 }
             } else {
+                // Logs a warning if the cursor is null
                 Log.w(TAG, "loadDataContent: cursor = null");
             }
         } finally {
+            // Ensures the Cursor is closed to release associated resources
             if (c != null)
                 c.close();
         }
@@ -228,32 +259,40 @@ public class SqlNote {
 
     public boolean setContent(JSONObject js) {
         try {
+            // Retrieves the 'note' object from the JSONObject
             JSONObject note = js.getJSONObject(GTaskStringUtils.META_HEAD_NOTE);
+
+            // Handles different types of notes based on their 'TYPE' field
             if (note.getInt(NoteColumns.TYPE) == Notes.TYPE_SYSTEM) {
                 Log.w(TAG, "cannot set system folder");
             } else if (note.getInt(NoteColumns.TYPE) == Notes.TYPE_FOLDER) {
-                // for folder we can only update the snnipet and type
-                String snippet = note.has(NoteColumns.SNIPPET) ? note
-                        .getString(NoteColumns.SNIPPET) : "";
+                // Processes folder type note: updates snippet and type
+                // Retrieves snippet and type values from 'note'
+                String snippet = note.has(NoteColumns.SNIPPET) ? note.getString(NoteColumns.SNIPPET) : "";
                 if (mIsCreate || !mSnippet.equals(snippet)) {
                     mDiffNoteValues.put(NoteColumns.SNIPPET, snippet);
                 }
                 mSnippet = snippet;
 
-                int type = note.has(NoteColumns.TYPE) ? note.getInt(NoteColumns.TYPE)
-                        : Notes.TYPE_NOTE;
+                int type = note.has(NoteColumns.TYPE) ? note.getInt(NoteColumns.TYPE) : Notes.TYPE_NOTE;
                 if (mIsCreate || mType != type) {
                     mDiffNoteValues.put(NoteColumns.TYPE, type);
                 }
                 mType = type;
             } else if (note.getInt(NoteColumns.TYPE) == Notes.TYPE_NOTE) {
+                // Processes note type: updates various note attributes
                 JSONArray dataArray = js.getJSONArray(GTaskStringUtils.META_HEAD_DATA);
+
+                // Retrieves various note attributes from the 'note' JSONObject
+                // and updates respective member variables if they have changed
                 long id = note.has(NoteColumns.ID) ? note.getLong(NoteColumns.ID) : INVALID_ID;
                 if (mIsCreate || mId != id) {
                     mDiffNoteValues.put(NoteColumns.ID, id);
                 }
                 mId = id;
 
+                // Retrieves various note attributes from the 'note' JSONObject
+                // and updates respective member variables if they have changed
                 long alertDate = note.has(NoteColumns.ALERTED_DATE) ? note
                         .getLong(NoteColumns.ALERTED_DATE) : 0;
                 if (mIsCreate || mAlertDate != alertDate) {
@@ -261,6 +300,8 @@ public class SqlNote {
                 }
                 mAlertDate = alertDate;
 
+                // Retrieves various note attributes from the 'note' JSONObject
+                // and updates respective member variables if they have changed
                 int bgColorId = note.has(NoteColumns.BG_COLOR_ID) ? note
                         .getInt(NoteColumns.BG_COLOR_ID) : ResourceParser.getDefaultBgId(mContext);
                 if (mIsCreate || mBgColorId != bgColorId) {
@@ -268,6 +309,8 @@ public class SqlNote {
                 }
                 mBgColorId = bgColorId;
 
+                // Retrieves various note attributes from the 'note' JSONObject
+                // and updates respective member variables if they have changed
                 long createDate = note.has(NoteColumns.CREATED_DATE) ? note
                         .getLong(NoteColumns.CREATED_DATE) : System.currentTimeMillis();
                 if (mIsCreate || mCreatedDate != createDate) {
@@ -275,6 +318,8 @@ public class SqlNote {
                 }
                 mCreatedDate = createDate;
 
+                // Retrieves various note attributes from the 'note' JSONObject
+                // and updates respective member variables if they have changed
                 int hasAttachment = note.has(NoteColumns.HAS_ATTACHMENT) ? note
                         .getInt(NoteColumns.HAS_ATTACHMENT) : 0;
                 if (mIsCreate || mHasAttachment != hasAttachment) {
@@ -282,6 +327,8 @@ public class SqlNote {
                 }
                 mHasAttachment = hasAttachment;
 
+                // Retrieves various note attributes from the 'note' JSONObject
+                // and updates respective member variables if they have changed
                 long modifiedDate = note.has(NoteColumns.MODIFIED_DATE) ? note
                         .getLong(NoteColumns.MODIFIED_DATE) : System.currentTimeMillis();
                 if (mIsCreate || mModifiedDate != modifiedDate) {
@@ -289,6 +336,8 @@ public class SqlNote {
                 }
                 mModifiedDate = modifiedDate;
 
+                // Retrieves various note attributes from the 'note' JSONObject
+                // and updates respective member variables if they have changed
                 long parentId = note.has(NoteColumns.PARENT_ID) ? note
                         .getLong(NoteColumns.PARENT_ID) : 0;
                 if (mIsCreate || mParentId != parentId) {
@@ -296,6 +345,8 @@ public class SqlNote {
                 }
                 mParentId = parentId;
 
+                // Retrieves various note attributes from the 'note' JSONObject
+                // and updates respective member variables if they have changed
                 String snippet = note.has(NoteColumns.SNIPPET) ? note
                         .getString(NoteColumns.SNIPPET) : "";
                 if (mIsCreate || !mSnippet.equals(snippet)) {
@@ -303,6 +354,8 @@ public class SqlNote {
                 }
                 mSnippet = snippet;
 
+                // Retrieves various note attributes from the 'note' JSONObject
+                // and updates respective member variables if they have changed
                 int type = note.has(NoteColumns.TYPE) ? note.getInt(NoteColumns.TYPE)
                         : Notes.TYPE_NOTE;
                 if (mIsCreate || mType != type) {
@@ -331,9 +384,11 @@ public class SqlNote {
                 }
                 mOriginParent = originParent;
 
+                // Iterates through the 'dataArray' to process associated data for the note
                 for (int i = 0; i < dataArray.length(); i++) {
                     JSONObject data = dataArray.getJSONObject(i);
                     SqlData sqlData = null;
+                    // Finds existing SqlData object or creates a new one for the data
                     if (data.has(DataColumns.ID)) {
                         long dataId = data.getLong(DataColumns.ID);
                         for (SqlData temp : mDataList) {
@@ -342,16 +397,17 @@ public class SqlNote {
                             }
                         }
                     }
-
+                    // Adds the data to SqlData objects or creates new SqlData objects
                     if (sqlData == null) {
                         sqlData = new SqlData(mContext);
                         mDataList.add(sqlData);
                     }
-
+                    // Sets content for the SqlData object
                     sqlData.setContent(data);
                 }
             }
         } catch (JSONException e) {
+            // Logs any exceptions and returns false in case of JSON parsing errors
             Log.e(TAG, e.toString());
             e.printStackTrace();
             return false;
@@ -364,12 +420,15 @@ public class SqlNote {
             JSONObject js = new JSONObject();
 
             if (mIsCreate) {
+                // If the note is in creation mode, logs an error and returns null
                 Log.e(TAG, "it seems that we haven't created this in database yet");
                 return null;
             }
 
+            // Creates a JSON object 'note' to hold note-related data based on its type
             JSONObject note = new JSONObject();
             if (mType == Notes.TYPE_NOTE) {
+                // Populates 'note' object with note attributes for a note type
                 note.put(NoteColumns.ID, mId);
                 note.put(NoteColumns.ALERTED_DATE, mAlertDate);
                 note.put(NoteColumns.BG_COLOR_ID, mBgColorId);
@@ -382,8 +441,10 @@ public class SqlNote {
                 note.put(NoteColumns.WIDGET_ID, mWidgetId);
                 note.put(NoteColumns.WIDGET_TYPE, mWidgetType);
                 note.put(NoteColumns.ORIGIN_PARENT_ID, mOriginParent);
+                // Adds 'note' object to the main JSON object 'js'
                 js.put(GTaskStringUtils.META_HEAD_NOTE, note);
 
+                // Creates a JSON array 'dataArray' for associated data (SqlData) for the note
                 JSONArray dataArray = new JSONArray();
                 for (SqlData sqlData : mDataList) {
                     JSONObject data = sqlData.getContent();
@@ -391,22 +452,29 @@ public class SqlNote {
                         dataArray.put(data);
                     }
                 }
+                // Adds 'dataArray' to the main JSON object 'js'
                 js.put(GTaskStringUtils.META_HEAD_DATA, dataArray);
             } else if (mType == Notes.TYPE_FOLDER || mType == Notes.TYPE_SYSTEM) {
+                // Handles folder or system type notes
+                // Populates 'note' object with attributes for folder or system type
                 note.put(NoteColumns.ID, mId);
                 note.put(NoteColumns.TYPE, mType);
                 note.put(NoteColumns.SNIPPET, mSnippet);
+
+                // Adds 'note' object to the main JSON object 'js'
                 js.put(GTaskStringUtils.META_HEAD_NOTE, note);
             }
 
             return js;
         } catch (JSONException e) {
+            // Handles JSON parsing exceptions: logs error and returns null
             Log.e(TAG, e.toString());
             e.printStackTrace();
         }
-        return null;
+        return null; // Returns null in case of exceptions
     }
 
+    // multiple setter and getter for this class fields
     public void setParentId(long id) {
         mParentId = id;
         mDiffNoteValues.put(NoteColumns.PARENT_ID, id);
@@ -441,52 +509,70 @@ public class SqlNote {
     }
 
     public void commit(boolean validateVersion) {
+        // If a new note is being created
         if (mIsCreate) {
+            // Checking if the ID is invalid and if the diff values contain an ID, then remove it
             if (mId == INVALID_ID && mDiffNoteValues.containsKey(NoteColumns.ID)) {
                 mDiffNoteValues.remove(NoteColumns.ID);
             }
 
+            // Insert the new note into the database
             Uri uri = mContentResolver.insert(Notes.CONTENT_NOTE_URI, mDiffNoteValues);
+            
+            // Obtain the ID of the newly created note
             try {
                 mId = Long.valueOf(uri.getPathSegments().get(1));
             } catch (NumberFormatException e) {
                 Log.e(TAG, "Get note id error :" + e.toString());
                 throw new ActionFailureException("create note failed");
             }
+            
+            // If the ID is 0, throw an IllegalStateException indicating failure in creating a thread ID
             if (mId == 0) {
                 throw new IllegalStateException("Create thread id failed");
             }
 
+            // If the type of note is a regular note, commit associated data (SqlData)
             if (mType == Notes.TYPE_NOTE) {
                 for (SqlData sqlData : mDataList) {
                     sqlData.commit(mId, false, -1);
                 }
             }
         } else {
+            // If the note is not newly created but being updated
+
+            // Check for valid note IDs, excluding root folder and call record folder
             if (mId <= 0 && mId != Notes.ID_ROOT_FOLDER && mId != Notes.ID_CALL_RECORD_FOLDER) {
                 Log.e(TAG, "No such note");
                 throw new IllegalStateException("Try to update note with invalid id");
             }
+
+            // If there are differences in note values, update the version and perform the update in the database
             if (mDiffNoteValues.size() > 0) {
-                mVersion ++;
+                mVersion++;
                 int result = 0;
+                
+                // Update the note in the database based on conditions and version validation
                 if (!validateVersion) {
                     result = mContentResolver.update(Notes.CONTENT_NOTE_URI, mDiffNoteValues, "("
-                            + NoteColumns.ID + "=?)", new String[] {
-                        String.valueOf(mId)
+                            + NoteColumns.ID + "=?)", new String[]{
+                            String.valueOf(mId)
                     });
                 } else {
                     result = mContentResolver.update(Notes.CONTENT_NOTE_URI, mDiffNoteValues, "("
                             + NoteColumns.ID + "=?) AND (" + NoteColumns.VERSION + "<=?)",
-                            new String[] {
+                            new String[]{
                                     String.valueOf(mId), String.valueOf(mVersion)
                             });
                 }
+                
+                // If the update result is 0, log a warning indicating no updates occurred
                 if (result == 0) {
                     Log.w(TAG, "there is no update. maybe user updates note when syncing");
                 }
             }
 
+            // If the note type is a regular note, commit associated data (SqlData)
             if (mType == Notes.TYPE_NOTE) {
                 for (SqlData sqlData : mDataList) {
                     sqlData.commit(mId, validateVersion, mVersion);
@@ -494,12 +580,14 @@ public class SqlNote {
             }
         }
 
-        // refresh local info
+        // Refresh local information by loading data from the cursor and data content if it's a regular note
         loadFromCursor(mId);
         if (mType == Notes.TYPE_NOTE)
             loadDataContent();
 
+        // Clear the temporary diff values and set the creation flag to false
         mDiffNoteValues.clear();
         mIsCreate = false;
     }
+
 }

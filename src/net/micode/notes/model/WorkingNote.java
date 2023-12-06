@@ -124,13 +124,16 @@ public class WorkingNote {
         loadNote();
     }
 
+    // Method to load note details
     private void loadNote() {
+        // Querying content resolver to retrieve note details
         Cursor cursor = mContext.getContentResolver().query(
                 ContentUris.withAppendedId(Notes.CONTENT_NOTE_URI, mNoteId), NOTE_PROJECTION, null,
                 null, null);
 
         if (cursor != null) {
             if (cursor.moveToFirst()) {
+                // Retrieving note details from the cursor
                 mFolderId = cursor.getLong(NOTE_PARENT_ID_COLUMN);
                 mBgColorId = cursor.getInt(NOTE_BG_COLOR_ID_COLUMN);
                 mWidgetId = cursor.getInt(NOTE_WIDGET_ID_COLUMN);
@@ -138,23 +141,27 @@ public class WorkingNote {
                 mAlertDate = cursor.getLong(NOTE_ALERTED_DATE_COLUMN);
                 mModifiedDate = cursor.getLong(NOTE_MODIFIED_DATE_COLUMN);
             }
-            cursor.close();
+            cursor.close(); // Closing the cursor
         } else {
+            // Logging an error and throwing an exception if note with the given ID is not found
             Log.e(TAG, "No note with id:" + mNoteId);
             throw new IllegalArgumentException("Unable to find note with id " + mNoteId);
         }
-        loadNoteData();
+        loadNoteData(); // Loading note data after retrieving note details
     }
 
+    // Method to load note data
     private void loadNoteData() {
+        // Querying content resolver to retrieve note data
         Cursor cursor = mContext.getContentResolver().query(Notes.CONTENT_DATA_URI, DATA_PROJECTION,
-                DataColumns.NOTE_ID + "=?", new String[] {
-                    String.valueOf(mNoteId)
+                DataColumns.NOTE_ID + "=?", new String[]{
+                        String.valueOf(mNoteId)
                 }, null);
 
         if (cursor != null) {
             if (cursor.moveToFirst()) {
                 do {
+                    // Parsing note data based on type
                     String type = cursor.getString(DATA_MIME_TYPE_COLUMN);
                     if (DataConstants.NOTE.equals(type)) {
                         mContent = cursor.getString(DATA_CONTENT_COLUMN);
@@ -167,48 +174,50 @@ public class WorkingNote {
                     }
                 } while (cursor.moveToNext());
             }
-            cursor.close();
+            cursor.close(); // Closing the cursor
         } else {
+            // Logging an error and throwing an exception if note data with the given ID is not found
             Log.e(TAG, "No data with id:" + mNoteId);
             throw new IllegalArgumentException("Unable to find note's data with id " + mNoteId);
         }
     }
 
+    // Method to create an empty note
     public static WorkingNote createEmptyNote(Context context, long folderId, int widgetId,
             int widgetType, int defaultBgColorId) {
-        WorkingNote note = new WorkingNote(context, folderId);
-        note.setBgColorId(defaultBgColorId);
-        note.setWidgetId(widgetId);
-        note.setWidgetType(widgetType);
-        return note;
+        WorkingNote note = new WorkingNote(context, folderId); // Creating a new WorkingNote instance
+        note.setBgColorId(defaultBgColorId); // Setting default background color ID
+        note.setWidgetId(widgetId); // Setting widget ID
+        note.setWidgetType(widgetType); // Setting widget type
+        return note; // Returning the created note
     }
 
+    // Method to load a WorkingNote
     public static WorkingNote load(Context context, long id) {
-        return new WorkingNote(context, id, 0);
+        return new WorkingNote(context, id, 0); // Creating a WorkingNote instance with given ID
     }
 
+    // Method to save the note
     public synchronized boolean saveNote() {
-        if (isWorthSaving()) {
-            if (!existInDatabase()) {
-                if ((mNoteId = Note.getNewNoteId(mContext, mFolderId)) == 0) {
-                    Log.e(TAG, "Create new note fail with id:" + mNoteId);
-                    return false;
+        if (isWorthSaving()) { // Checking if note is worth saving
+            if (!existInDatabase()) { // Checking if note exists in the database
+                if ((mNoteId = Note.getNewNoteId(mContext, mFolderId)) == 0) { // Getting a new note ID if not exists
+                    Log.e(TAG, "Create new note fail with id:" + mNoteId); // Logging error if creating a new note fails
+                    return false; // Returning false if creation fails
                 }
             }
 
-            mNote.syncNote(mContext, mNoteId);
+            mNote.syncNote(mContext, mNoteId); // Synchronizing note with database
 
-            /**
-             * Update widget content if there exist any widget of this note
-             */
+            // Updating widget content if applicable
             if (mWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID
                     && mWidgetType != Notes.TYPE_WIDGET_INVALIDE
                     && mNoteSettingStatusListener != null) {
-                mNoteSettingStatusListener.onWidgetChanged();
+                mNoteSettingStatusListener.onWidgetChanged(); // Notifying widget change
             }
-            return true;
+            return true; // Returning true after successful saving
         } else {
-            return false;
+            return false; // Returning false if note is not worth saving
         }
     }
 
@@ -229,48 +238,53 @@ public class WorkingNote {
         mNoteSettingStatusListener = l;
     }
 
+    // Method to set the alert date
     public void setAlertDate(long date, boolean set) {
         if (date != mAlertDate) {
-            mAlertDate = date;
-            mNote.setNoteValue(NoteColumns.ALERTED_DATE, String.valueOf(mAlertDate));
+            mAlertDate = date; // Setting alert date
+            mNote.setNoteValue(NoteColumns.ALERTED_DATE, String.valueOf(mAlertDate)); // Setting note value for alert date
         }
         if (mNoteSettingStatusListener != null) {
-            mNoteSettingStatusListener.onClockAlertChanged(date, set);
+            mNoteSettingStatusListener.onClockAlertChanged(date, set); // Notifying clock alert change
         }
     }
 
+    // Method to mark note as deleted
     public void markDeleted(boolean mark) {
-        mIsDeleted = mark;
+        mIsDeleted = mark; // Marking note as deleted or not
         if (mWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID
                 && mWidgetType != Notes.TYPE_WIDGET_INVALIDE && mNoteSettingStatusListener != null) {
-                mNoteSettingStatusListener.onWidgetChanged();
+                mNoteSettingStatusListener.onWidgetChanged(); // Notifying widget change
         }
     }
 
+    // Method to set the background color ID
     public void setBgColorId(int id) {
         if (id != mBgColorId) {
-            mBgColorId = id;
+            mBgColorId = id; // Setting background color ID
             if (mNoteSettingStatusListener != null) {
-                mNoteSettingStatusListener.onBackgroundColorChanged();
+                mNoteSettingStatusListener.onBackgroundColorChanged(); // Notifying background color change
             }
-            mNote.setNoteValue(NoteColumns.BG_COLOR_ID, String.valueOf(id));
+            mNote.setNoteValue(NoteColumns.BG_COLOR_ID, String.valueOf(id)); // Setting note value for background color ID
         }
     }
 
+    // Method to set the checklist mode
     public void setCheckListMode(int mode) {
         if (mMode != mode) {
             if (mNoteSettingStatusListener != null) {
-                mNoteSettingStatusListener.onCheckListModeChanged(mMode, mode);
+                mNoteSettingStatusListener.onCheckListModeChanged(mMode, mode); // Notifying checklist mode change
             }
-            mMode = mode;
-            mNote.setTextData(TextNote.MODE, String.valueOf(mMode));
+            mMode = mode; // Setting checklist mode
+            mNote.setTextData(TextNote.MODE, String.valueOf(mMode)); // Setting text data for mode
         }
     }
 
+    // Method to set the widget type
     public void setWidgetType(int type) {
         if (type != mWidgetType) {
-            mWidgetType = type;
-            mNote.setNoteValue(NoteColumns.WIDGET_TYPE, String.valueOf(mWidgetType));
+            mWidgetType = type; // Setting widget type
+            mNote.setNoteValue(NoteColumns.WIDGET_TYPE, String.valueOf(mWidgetType)); // Setting note value for widget type
         }
     }
 

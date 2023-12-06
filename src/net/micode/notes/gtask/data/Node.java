@@ -20,33 +20,26 @@ import android.database.Cursor;
 
 import org.json.JSONObject;
 
+// Defines an abstract class named 'Node'
 public abstract class Node {
+    // Defines integer constants representing different sync actions
     public static final int SYNC_ACTION_NONE = 0;
-
     public static final int SYNC_ACTION_ADD_REMOTE = 1;
-
     public static final int SYNC_ACTION_ADD_LOCAL = 2;
-
     public static final int SYNC_ACTION_DEL_REMOTE = 3;
-
     public static final int SYNC_ACTION_DEL_LOCAL = 4;
-
     public static final int SYNC_ACTION_UPDATE_REMOTE = 5;
-
     public static final int SYNC_ACTION_UPDATE_LOCAL = 6;
-
     public static final int SYNC_ACTION_UPDATE_CONFLICT = 7;
-
     public static final int SYNC_ACTION_ERROR = 8;
 
+    // Declares private member variables for Node class
     private String mGid;
-
     private String mName;
-
     private long mLastModified;
-
     private boolean mDeleted;
 
+    // Constructor for Node class initializing member variables
     public Node() {
         mGid = null;
         mName = "";
@@ -54,18 +47,15 @@ public abstract class Node {
         mDeleted = false;
     }
 
+    // Abstract methods to be implemented by subclasses
     public abstract JSONObject getCreateAction(int actionId);
-
     public abstract JSONObject getUpdateAction(int actionId);
-
     public abstract void setContentByRemoteJSON(JSONObject js);
-
     public abstract void setContentByLocalJSON(JSONObject js);
-
     public abstract JSONObject getLocalJSONFromContent();
-
     public abstract int getSyncAction(Cursor c);
 
+    // Setter methods for the member variables
     public void setGid(String gid) {
         this.mGid = gid;
     }
@@ -82,6 +72,7 @@ public abstract class Node {
         this.mDeleted = deleted;
     }
 
+    // Getter methods for the member variables
     public String getGid() {
         return this.mGid;
     }
@@ -97,5 +88,4 @@ public abstract class Node {
     public boolean getDeleted() {
         return this.mDeleted;
     }
-
 }

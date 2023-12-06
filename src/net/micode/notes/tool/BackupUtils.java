@@ -165,55 +165,61 @@ public class BackupUtils {
         /**
          * Export note identified by id to a print stream
          */
-        private void exportNoteToText(String noteId, PrintStream ps) {
-            Cursor dataCursor = mContext.getContentResolver().query(Notes.CONTENT_DATA_URI,
-                    DATA_PROJECTION, DataColumns.NOTE_ID + "=?", new String[] {
+    // Method to export note to text format
+    private void exportNoteToText(String noteId, PrintStream ps) {
+        // Querying content resolver to retrieve note data
+        Cursor dataCursor = mContext.getContentResolver().query(Notes.CONTENT_DATA_URI,
+                DATA_PROJECTION, DataColumns.NOTE_ID + "=?", new String[]{
                         noteId
-                    }, null);
+                }, null);
 
-            if (dataCursor != null) {
-                if (dataCursor.moveToFirst()) {
-                    do {
-                        String mimeType = dataCursor.getString(DATA_COLUMN_MIME_TYPE);
-                        if (DataConstants.CALL_NOTE.equals(mimeType)) {
-                            // Print phone number
-                            String phoneNumber = dataCursor.getString(DATA_COLUMN_PHONE_NUMBER);
-                            long callDate = dataCursor.getLong(DATA_COLUMN_CALL_DATE);
-                            String location = dataCursor.getString(DATA_COLUMN_CONTENT);
+        if (dataCursor != null) {
+            if (dataCursor.moveToFirst()) {
+                do {
+                    String mimeType = dataCursor.getString(DATA_COLUMN_MIME_TYPE);
+                    if (DataConstants.CALL_NOTE.equals(mimeType)) {
+                        // Handling call notes
+                        String phoneNumber = dataCursor.getString(DATA_COLUMN_PHONE_NUMBER);
+                        long callDate = dataCursor.getLong(DATA_COLUMN_CALL_DATE);
+                        String location = dataCursor.getString(DATA_COLUMN_CONTENT);
 
-                            if (!TextUtils.isEmpty(phoneNumber)) {
-                                ps.println(String.format(getFormat(FORMAT_NOTE_CONTENT),
-                                        phoneNumber));
-                            }
-                            // Print call date
-                            ps.println(String.format(getFormat(FORMAT_NOTE_CONTENT), DateFormat
-                                    .format(mContext.getString(R.string.format_datetime_mdhm),
-                                            callDate)));
-                            // Print call attachment location
-                            if (!TextUtils.isEmpty(location)) {
-                                ps.println(String.format(getFormat(FORMAT_NOTE_CONTENT),
-                                        location));
-                            }
-                        } else if (DataConstants.NOTE.equals(mimeType)) {
-                            String content = dataCursor.getString(DATA_COLUMN_CONTENT);
-                            if (!TextUtils.isEmpty(content)) {
-                                ps.println(String.format(getFormat(FORMAT_NOTE_CONTENT),
-                                        content));
-                            }
+                        // Printing phone number
+                        if (!TextUtils.isEmpty(phoneNumber)) {
+                            ps.println(String.format(getFormat(FORMAT_NOTE_CONTENT),
+                                    phoneNumber));
                         }
-                    } while (dataCursor.moveToNext());
-                }
-                dataCursor.close();
+                        // Printing call date
+                        ps.println(String.format(getFormat(FORMAT_NOTE_CONTENT), DateFormat
+                                .format(mContext.getString(R.string.format_datetime_mdhm),
+                                        callDate)));
+                        // Printing call attachment location
+                        if (!TextUtils.isEmpty(location)) {
+                            ps.println(String.format(getFormat(FORMAT_NOTE_CONTENT),
+                                    location));
+                        }
+                    } else if (DataConstants.NOTE.equals(mimeType)) {
+                        // Handling regular notes
+                        String content = dataCursor.getString(DATA_COLUMN_CONTENT);
+                        if (!TextUtils.isEmpty(content)) {
+                            ps.println(String.format(getFormat(FORMAT_NOTE_CONTENT),
+                                    content));
+                        }
+                    }
+                } while (dataCursor.moveToNext());
             }
-            // print a line separator between note
-            try {
-                ps.write(new byte[] {
-                        Character.LINE_SEPARATOR, Character.LETTER_NUMBER
-                });
-            } catch (IOException e) {
-                Log.e(TAG, e.toString());
-            }
+            dataCursor.close(); // Closing the cursor
         }
+
+        // Print a line separator between notes
+        try {
+            ps.write(new byte[]{
+                    Character.LINE_SEPARATOR, Character.LETTER_NUMBER
+            });
+        } catch (IOException e) {
+            Log.e(TAG, e.toString()); // Logging IOException
+        }
+    }
+
 
         /**
          * Note will be exported as text which is user readable
@@ -312,33 +318,36 @@ public class BackupUtils {
     /**
      * Generate the text file to store imported data
      */
+    // Method to generate a file mounted on SD card
     private static File generateFileMountedOnSDcard(Context context, int filePathResId, int fileNameFormatResId) {
         StringBuilder sb = new StringBuilder();
-        sb.append(Environment.getExternalStorageDirectory());
-        sb.append(context.getString(filePathResId));
-        File filedir = new File(sb.toString());
+        sb.append(Environment.getExternalStorageDirectory()); // Appending external storage directory path
+        sb.append(context.getString(filePathResId)); // Appending file path resource ID
+        File filedir = new File(sb.toString()); // Creating a directory file
+
         sb.append(context.getString(
                 fileNameFormatResId,
                 DateFormat.format(context.getString(R.string.format_date_ymd),
-                        System.currentTimeMillis())));
-        File file = new File(sb.toString());
+                        System.currentTimeMillis()))); // Appending formatted file name with date
+        File file = new File(sb.toString()); // Creating a file with the complete path
 
         try {
             if (!filedir.exists()) {
-                filedir.mkdir();
+                filedir.mkdir(); // Creating directory if it doesn't exist
             }
             if (!file.exists()) {
-                file.createNewFile();
+                file.createNewFile(); // Creating file if it doesn't exist
             }
-            return file;
+            return file; // Returning the created file
         } catch (SecurityException e) {
-            e.printStackTrace();
+            e.printStackTrace(); // Handling security exception
         } catch (IOException e) {
-            e.printStackTrace();
+            e.printStackTrace(); // Handling IO exception
         }
 
-        return null;
+        return null; // Returning null if file creation fails
     }
+
 }
 
 

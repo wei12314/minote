@@ -29,95 +29,85 @@ import net.micode.notes.ui.NotesListActivity;
 import net.micode.notes.ui.NotesPreferenceActivity;
 
 
-public class GTaskASyncTask extends AsyncTask<Void, String, Integer> {
+public class GTaskASyncTask extends AsyncTask<Void, String, Integer> { // Class declaration extending AsyncTask
 
-    private static int GTASK_SYNC_NOTIFICATION_ID = 5234235;
+    private static int GTASK_SYNC_NOTIFICATION_ID = 5234235; // Declaration of a static integer variable
 
-    public interface OnCompleteListener {
-        void onComplete();
+    public interface OnCompleteListener { // Interface declaration
+        void onComplete(); // Interface method signature
     }
 
-    private Context mContext;
+    private Context mContext; // Declaration of a Context variable
+    private NotificationManager mNotifiManager; // Declaration of a NotificationManager variable
+    private GTaskManager mTaskManager; // Declaration of a GTaskManager variable
+    private OnCompleteListener mOnCompleteListener; // Declaration of a listener variable of type OnCompleteListener
 
-    private NotificationManager mNotifiManager;
-
-    private GTaskManager mTaskManager;
-
-    private OnCompleteListener mOnCompleteListener;
-
-    public GTaskASyncTask(Context context, OnCompleteListener listener) {
-        mContext = context;
-        mOnCompleteListener = listener;
-        mNotifiManager = (NotificationManager) mContext
-                .getSystemService(Context.NOTIFICATION_SERVICE);
-        mTaskManager = GTaskManager.getInstance();
+    public GTaskASyncTask(Context context, OnCompleteListener listener) { // Constructor with Context and OnCompleteListener parameters
+        mContext = context; // Assigning passed Context to the class variable
+        mOnCompleteListener = listener; // Assigning passed OnCompleteListener to the class variable
+        mNotifiManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE); // Initializing NotificationManager
+        mTaskManager = GTaskManager.getInstance(); // Initializing GTaskManager
     }
 
-    public void cancelSync() {
-        mTaskManager.cancelSync();
+    public void cancelSync() { // Method to cancel synchronization
+        mTaskManager.cancelSync(); // Calling a method from GTaskManager to cancel synchronization
     }
 
-    public void publishProgess(String message) {
-        publishProgress(new String[] {
-            message
-        });
+    public void publishProgess(String message) { // Method to publish progress with a message
+        publishProgress(new String[]{message}); // Publishing progress with the provided message
     }
 
-    private void showNotification(int tickerId, String content) {
-        Notification notification = new Notification(R.drawable.notification, mContext
-                .getString(tickerId), System.currentTimeMillis());
-        notification.defaults = Notification.DEFAULT_LIGHTS;
-        notification.flags = Notification.FLAG_AUTO_CANCEL;
-        PendingIntent pendingIntent;
-        if (tickerId != R.string.ticker_success) {
-            pendingIntent = PendingIntent.getActivity(mContext, 0, new Intent(mContext,
-                    NotesPreferenceActivity.class), 0);
+    private void showNotification(int tickerId, String content) { // Method to show a notification
+        Notification notification = new Notification(R.drawable.notification, mContext.getString(tickerId), System.currentTimeMillis()); // Creating a new notification
+        notification.defaults = Notification.DEFAULT_LIGHTS; // Setting default lights for the notification
+        notification.flags = Notification.FLAG_AUTO_CANCEL; // Setting notification flags
 
+        PendingIntent pendingIntent; // Declaration of PendingIntent variable
+
+        if (tickerId != R.string.ticker_success) { // Checking the tickerId for a specific value
+            pendingIntent = PendingIntent.getActivity(mContext, 0, new Intent(mContext, NotesPreferenceActivity.class), 0); // Creating a PendingIntent for a specific activity
         } else {
-            pendingIntent = PendingIntent.getActivity(mContext, 0, new Intent(mContext,
-                    NotesListActivity.class), 0);
+            pendingIntent = PendingIntent.getActivity(mContext, 0, new Intent(mContext, NotesListActivity.class), 0); // Creating a PendingIntent for a different activity
         }
-        notification.setLatestEventInfo(mContext, mContext.getString(R.string.app_name), content,
-                pendingIntent);
-        mNotifiManager.notify(GTASK_SYNC_NOTIFICATION_ID, notification);
+
+        notification.setLatestEventInfo(mContext, mContext.getString(R.string.app_name), content, pendingIntent); // Setting the latest event information for the notification
+        mNotifiManager.notify(GTASK_SYNC_NOTIFICATION_ID, notification); // Notifying using the NotificationManager with a specific ID
     }
 
     @Override
-    protected Integer doInBackground(Void... unused) {
-        publishProgess(mContext.getString(R.string.sync_progress_login, NotesPreferenceActivity
-                .getSyncAccountName(mContext)));
-        return mTaskManager.sync(mContext, this);
+    protected Integer doInBackground(Void... unused) { // Background task execution method
+        publishProgess(mContext.getString(R.string.sync_progress_login, NotesPreferenceActivity.getSyncAccountName(mContext))); // Publishing progress with a specific message
+        return mTaskManager.sync(mContext, this); // Initiating synchronization using GTaskManager
     }
 
     @Override
-    protected void onProgressUpdate(String... progress) {
-        showNotification(R.string.ticker_syncing, progress[0]);
-        if (mContext instanceof GTaskSyncService) {
-            ((GTaskSyncService) mContext).sendBroadcast(progress[0]);
+    protected void onProgressUpdate(String... progress) { // Method called when progress is updated
+        showNotification(R.string.ticker_syncing, progress[0]); // Showing a notification for syncing progress
+        if (mContext instanceof GTaskSyncService) { // Checking if the context is an instance of GTaskSyncService
+            ((GTaskSyncService) mContext).sendBroadcast(progress[0]); // Broadcasting progress if it is an instance of GTaskSyncService
         }
     }
 
-    @Override
-    protected void onPostExecute(Integer result) {
-        if (result == GTaskManager.STATE_SUCCESS) {
-            showNotification(R.string.ticker_success, mContext.getString(
-                    R.string.success_sync_account, mTaskManager.getSyncAccount()));
-            NotesPreferenceActivity.setLastSyncTime(mContext, System.currentTimeMillis());
-        } else if (result == GTaskManager.STATE_NETWORK_ERROR) {
-            showNotification(R.string.ticker_fail, mContext.getString(R.string.error_sync_network));
-        } else if (result == GTaskManager.STATE_INTERNAL_ERROR) {
-            showNotification(R.string.ticker_fail, mContext.getString(R.string.error_sync_internal));
-        } else if (result == GTaskManager.STATE_SYNC_CANCELLED) {
-            showNotification(R.string.ticker_cancel, mContext
-                    .getString(R.string.error_sync_cancelled));
-        }
-        if (mOnCompleteListener != null) {
-            new Thread(new Runnable() {
 
-                public void run() {
-                    mOnCompleteListener.onComplete();
+    @Override
+    protected void onPostExecute(Integer result) { // Method called after the background task is finished
+        if (result == GTaskManager.STATE_SUCCESS) { // Checking the result of the background task
+            showNotification(R.string.ticker_success, mContext.getString(R.string.success_sync_account, mTaskManager.getSyncAccount())); // Showing a success notification
+            NotesPreferenceActivity.setLastSyncTime(mContext, System.currentTimeMillis()); // Setting the last synchronization time
+        } else if (result == GTaskManager.STATE_NETWORK_ERROR) { // Handling network error result
+            showNotification(R.string.ticker_fail, mContext.getString(R.string.error_sync_network)); // Showing a notification for network error
+        } else if (result == GTaskManager.STATE_INTERNAL_ERROR) { // Handling internal error result
+            showNotification(R.string.ticker_fail, mContext.getString(R.string.error_sync_internal)); // Showing a notification for internal error
+        } else if (result == GTaskManager.STATE_SYNC_CANCELLED) { // Handling cancelled synchronization result
+            showNotification(R.string.ticker_cancel, mContext.getString(R.string.error_sync_cancelled)); // Showing a notification for cancelled synchronization
+        }
+        
+        if (mOnCompleteListener != null) { // Checking if there's a completion listener
+            new Thread(new Runnable() { // Creating a new thread
+                public void run() { // Implementing the run method for the thread
+                    mOnCompleteListener.onComplete(); // Calling the onComplete method of the listener
                 }
-            }).start();
+            }).start(); // Starting the thread
         }
     }
 }

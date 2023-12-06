@@ -28,10 +28,12 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.NumberPicker;
 
+// DateTimePicker is a custom view to allow selecting date/time
 public class DateTimePicker extends FrameLayout {
 
     private static final boolean DEFAULT_ENABLE_STATE = true;
 
+    // constants for date and time range
     private static final int HOURS_IN_HALF_DAY = 12;
     private static final int HOURS_IN_ALL_DAY = 24;
     private static final int DAYS_IN_ALL_WEEK = 7;
@@ -46,6 +48,7 @@ public class DateTimePicker extends FrameLayout {
     private static final int AMPM_SPINNER_MIN_VAL = 0;
     private static final int AMPM_SPINNER_MAX_VAL = 1;
 
+    // member variables for date components
     private final NumberPicker mDateSpinner;
     private final NumberPicker mHourSpinner;
     private final NumberPicker mMinuteSpinner;
@@ -63,7 +66,7 @@ public class DateTimePicker extends FrameLayout {
     private boolean mInitialising;
 
     private OnDateTimeChangedListener mOnDateTimeChangedListener;
-
+    // Listeners to update date/time on spinner scroll 
     private NumberPicker.OnValueChangeListener mOnDateChangedListener = new NumberPicker.OnValueChangeListener() {
         @Override
         public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
@@ -158,11 +161,13 @@ public class DateTimePicker extends FrameLayout {
         }
     };
 
+    // Interface to notify date/time changes
     public interface OnDateTimeChangedListener {
         void onDateTimeChanged(DateTimePicker view, int year, int month,
                 int dayOfMonth, int hourOfDay, int minute);
     }
 
+    // constructors
     public DateTimePicker(Context context) {
         this(context, System.currentTimeMillis());
     }
@@ -213,7 +218,8 @@ public class DateTimePicker extends FrameLayout {
         // set the content descriptions
         mInitialising = false;
     }
-
+    
+    // Various getter/setter methods
     @Override
     public void setEnabled(boolean enabled) {
         if (mIsEnabled == enabled) {

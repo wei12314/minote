@@ -34,48 +34,53 @@ import net.micode.notes.data.Notes.TextNote;
 import java.util.ArrayList;
 
 
+// Class representing a Note entity
 public class Note {
-    private ContentValues mNoteDiffValues;
-    private NoteData mNoteData;
-    private static final String TAG = "Note";
+    private ContentValues mNoteDiffValues; // ContentValues to hold note differences
+    private NoteData mNoteData; // Instance of NoteData
+    private static final String TAG = "Note"; // Tag for logging
+
     /**
      * Create a new note id for adding a new note to databases
      */
     public static synchronized long getNewNoteId(Context context, long folderId) {
         // Create a new note in the database
-        ContentValues values = new ContentValues();
-        long createdTime = System.currentTimeMillis();
-        values.put(NoteColumns.CREATED_DATE, createdTime);
-        values.put(NoteColumns.MODIFIED_DATE, createdTime);
-        values.put(NoteColumns.TYPE, Notes.TYPE_NOTE);
-        values.put(NoteColumns.LOCAL_MODIFIED, 1);
-        values.put(NoteColumns.PARENT_ID, folderId);
-        Uri uri = context.getContentResolver().insert(Notes.CONTENT_NOTE_URI, values);
+        ContentValues values = new ContentValues(); // Initializing ContentValues to hold note data
+        long createdTime = System.currentTimeMillis(); // Getting current time
+        values.put(NoteColumns.CREATED_DATE, createdTime); // Setting created date
+        values.put(NoteColumns.MODIFIED_DATE, createdTime); // Setting modified date
+        values.put(NoteColumns.TYPE, Notes.TYPE_NOTE); // Setting note type
+        values.put(NoteColumns.LOCAL_MODIFIED, 1); // Setting local modified flag
+        values.put(NoteColumns.PARENT_ID, folderId); // Setting parent ID
+        Uri uri = context.getContentResolver().insert(Notes.CONTENT_NOTE_URI, values); // Inserting note into database
 
-        long noteId = 0;
+        long noteId = 0; // Initializing note ID
         try {
-            noteId = Long.valueOf(uri.getPathSegments().get(1));
+            noteId = Long.valueOf(uri.getPathSegments().get(1)); // Getting note ID from URI
         } catch (NumberFormatException e) {
-            Log.e(TAG, "Get note id error :" + e.toString());
-            noteId = 0;
+            Log.e(TAG, "Get note id error :" + e.toString()); // Logging error if unable to get note ID
+            noteId = 0; // Resetting note ID
         }
         if (noteId == -1) {
-            throw new IllegalStateException("Wrong note id:" + noteId);
+            throw new IllegalStateException("Wrong note id:" + noteId); // Throwing exception for wrong note ID
         }
-        return noteId;
+        return noteId; // Returning the generated note ID
     }
 
+    // Constructor initializing Note class
     public Note() {
-        mNoteDiffValues = new ContentValues();
-        mNoteData = new NoteData();
+        mNoteDiffValues = new ContentValues(); // Initializing ContentValues for note differences
+        mNoteData = new NoteData(); // Initializing NoteData
     }
 
+    // Method to set note value
     public void setNoteValue(String key, String value) {
-        mNoteDiffValues.put(key, value);
-        mNoteDiffValues.put(NoteColumns.LOCAL_MODIFIED, 1);
-        mNoteDiffValues.put(NoteColumns.MODIFIED_DATE, System.currentTimeMillis());
+        mNoteDiffValues.put(key, value); // Setting key-value pair in ContentValues for note differences
+        mNoteDiffValues.put(NoteColumns.LOCAL_MODIFIED, 1); // Updating local modified flag
+        mNoteDiffValues.put(NoteColumns.MODIFIED_DATE, System.currentTimeMillis()); // Updating modified date
     }
 
+    // setters
     public void setTextData(String key, String value) {
         mNoteData.setTextData(key, value);
     }
@@ -100,11 +105,14 @@ public class Note {
         return mNoteDiffValues.size() > 0 || mNoteData.isLocalModified();
     }
 
+    // Method to synchronize a note
     public boolean syncNote(Context context, long noteId) {
+        // Validating note ID
         if (noteId <= 0) {
             throw new IllegalArgumentException("Wrong note id:" + noteId);
         }
 
+        // Checking if note is not locally modified, and if so, return true
         if (!isLocalModified()) {
             return true;
         }
@@ -114,21 +122,24 @@ public class Note {
          * {@link NoteColumns#MODIFIED_DATE}. For data safety, though update note fails, we also update the
          * note data info
          */
+        // Updating the note with modified values
         if (context.getContentResolver().update(
                 ContentUris.withAppendedId(Notes.CONTENT_NOTE_URI, noteId), mNoteDiffValues, null,
                 null) == 0) {
             Log.e(TAG, "Update note error, should not happen");
-            // Do not return, fall through
+            // Clearing note differences even if update fails
+            mNoteDiffValues.clear();
         }
-        mNoteDiffValues.clear();
 
+        // Checking if NoteData is locally modified and pushing into ContentResolver
         if (mNoteData.isLocalModified()
                 && (mNoteData.pushIntoContentResolver(context, noteId) == null)) {
-            return false;
+            return false; // Returning false if pushing into ContentResolver fails
         }
 
-        return true;
+        return true; // Returning true if synchronization is successful
     }
+
 
     private class NoteData {
         private long mTextDataId;
