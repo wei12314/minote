@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Notes.iml" filepath="$PROJECT_DIR$/.idea/modules/Notes.iml" group="Notes" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Notes/Notes-Notes.iml" filepath="$PROJECT_DIR$/.idea/modules/Notes/Notes-Notes.iml" group="Notes/Notes" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/minote.iml" filepath="$PROJECT_DIR$/.idea/modules/minote.iml" group="minote" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Notes/minote-Notes.iml" filepath="$PROJECT_DIR$/.idea/modules/Notes/minote-Notes.iml" group="minote/Notes" />
     </modules>
   </component>
 </project>

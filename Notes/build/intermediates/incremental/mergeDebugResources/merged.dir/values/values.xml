@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:ns1="urn:oasis:names:tc:xliff:document:1.2">
     <string-array name="format_for_exported_note">
-        <item>-%s</item>      
-        <item>--%s</item>     
-        <item>--%s</item>     
-        <item>--%s</item>     
+        <item>-%s</item>      <!-- format_folder_name -->
+        <item>--%s</item>     <!-- format_folder_note_date -->
+        <item>--%s</item>     <!-- format_note_date -->
+        <item>--%s</item>     <!-- format_note_content -->
     </string-array>
     <string-array name="menu_share_ways">
         <item>Messaging</item>
@@ -18,7 +18,7 @@
     <dimen name="text_font_size_super">33sp</dimen>
     <plurals name="search_results_title">
          <item quantity="one"><ns1:g example="1" id="number">%1$s</ns1:g> result for \"<ns1:g example="???" id="search">%2$s</ns1:g>\"</item>
-        
+        <!-- Case of 0 or 2 or more results. -->
         <item quantity="other"><ns1:g example="15" id="number">%1$s</ns1:g> results for \"<ns1:g example="???" id="search">%2$s</ns1:g>\"</item>
     </plurals>
     <string name="alert_message_delete_folder">Confirm to delete folder and its notes?</string>
