@@ -1,0 +1,283 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<!--
+3 Copyright (c) 2010-2011, The MiCode Open Source Community (www.micode.net)
+4
+5     Licensed under the Apache License, Version 2.0 (the "License");
+6     you may not use this file except in compliance with the License.
+7     You may obtain a copy of the License at
+8
+9          http://www.apache.org/licenses/LICENSE-2.0
+10
+11     Unless required by applicable law or agreed to in writing, software
+12     distributed under the License is distributed on an "AS IS" BASIS,
+13     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+14     See the License for the specific language governing permissions and
+15     limitations under the License.
+16-->
+17<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+18    package="net.micode.notes"
+19    android:versionCode="1"
+20    android:versionName="0.1" >
+21
+22    <uses-sdk
+23        android:minSdkVersion="14"
+23-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml
+24        android:targetSdkVersion="14" />
+24-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml
+25
+26    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+26-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:25:5-81
+26-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:25:22-78
+27    <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT" />
+27-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:26:5-88
+27-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:26:22-85
+28    <uses-permission android:name="android.permission.INTERNET" />
+28-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:27:5-67
+28-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:27:22-64
+29    <uses-permission android:name="android.permission.READ_CONTACTS" />
+29-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:28:5-72
+29-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:28:22-69
+30    <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
+30-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:29:5-74
+30-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:29:22-71
+31    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
+31-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:30:5-80
+31-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:30:22-77
+32    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+32-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:31:5-71
+32-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:31:22-68
+33    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
+33-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:32:5-74
+33-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:32:22-71
+34    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+34-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:33:5-81
+34-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:33:22-78
+35
+36    <application
+36-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:35:5-150:19
+37        android:debuggable="true"
+38        android:icon="@drawable/icon_app"
+38-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:36:9-42
+39        android:label="@string/app_name"
+39-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:37:9-41
+40        android:testOnly="true" >
+41        <activity
+41-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:38:9-51:20
+42            android:name="net.micode.notes.ui.NotesListActivity"
+42-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:39:13-49
+43            android:configChanges="keyboardHidden|orientation|screenSize"
+43-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:40:13-74
+44            android:label="@string/app_name"
+44-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:41:13-45
+45            android:launchMode="singleTop"
+45-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:42:13-43
+46            android:theme="@style/NoteTheme"
+46-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:43:13-45
+47            android:uiOptions="splitActionBarWhenNarrow"
+47-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:44:13-57
+48            android:windowSoftInputMode="adjustPan" >
+48-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:45:13-52
+49            <intent-filter>
+49-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:47:13-50:29
+50                <action android:name="android.intent.action.MAIN" />
+50-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:48:17-69
+50-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:48:25-66
+51
+52                <category android:name="android.intent.category.LAUNCHER" />
+52-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:49:17-77
+52-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:49:27-74
+53            </intent-filter>
+54        </activity>
+55        <activity
+55-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:53:9-82:20
+56            android:name="net.micode.notes.ui.NoteEditActivity"
+56-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:54:13-48
+57            android:configChanges="keyboardHidden|orientation|screenSize"
+57-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:55:13-74
+58            android:launchMode="singleTop"
+58-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:56:13-43
+59            android:theme="@style/NoteTheme" >
+59-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:57:13-45
+60            <intent-filter>
+60-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:59:13-64:29
+61                <action android:name="android.intent.action.VIEW" />
+61-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:60:17-69
+61-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:60:25-66
+62
+63                <category android:name="android.intent.category.DEFAULT" />
+63-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:61:17-76
+63-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:61:27-73
+64
+65                <data
+65-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:62:17-167
+66                    android:host="com.example.notes.provider"
+66-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:62:101-142
+67                    android:mimeType="vnd.android.cursor.item/text_note"
+67-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:62:23-75
+68                    android:path="/notes"
+68-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:62:143-164
+69                    android:scheme="content" />
+69-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:62:76-100
+70                <data
+70-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:62:17-167
+71                    android:host="com.example.notes.provider"
+71-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:62:101-142
+72                    android:mimeType="vnd.android.cursor.item/call_note"
+72-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:62:23-75
+73                    android:path="/notes"
+73-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:62:143-164
+74                    android:scheme="content" />
+74-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:62:76-100
+75            </intent-filter>
+76            <intent-filter>
+76-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:67:13-72:29
+77                <action android:name="android.intent.action.INSERT_OR_EDIT" />
+77-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:68:17-79
+77-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:68:25-76
+78
+79                <category android:name="android.intent.category.DEFAULT" />
+79-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:61:17-76
+79-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:61:27-73
+80
+81                <data android:mimeType="vnd.android.cursor.item/text_note" />
+81-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:62:17-167
+81-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:62:23-75
+82                <data android:mimeType="vnd.android.cursor.item/call_note" />
+82-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:62:17-167
+82-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:62:23-75
+83            </intent-filter>
+84            <intent-filter>
+84-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:74:13-77:29
+85                <action android:name="android.intent.action.SEARCH" />
+85-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:75:17-71
+85-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:75:25-68
+86
+87                <category android:name="android.intent.category.DEFAULT" />
+87-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:61:17-76
+87-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:61:27-73
+88            </intent-filter>
+89
+90            <meta-data
+90-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:79:13-81:54
+91                android:name="android.app.searchable"
+91-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:80:17-54
+92                android:resource="@xml/searchable" />
+92-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:81:17-51
+93        </activity>
+94
+95        <provider
+95-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:84:9-87:43
+96            android:name="net.micode.notes.data.NotesProvider"
+96-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:85:13-63
+97            android:authorities="micode_notes"
+97-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:86:13-47
+98            android:multiprocess="true" />
+98-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:87:13-40
+99
+100        <receiver
+100-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:89:9-101:20
+101            android:name="net.micode.notes.widget.NoteWidgetProvider_2x"
+101-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:90:13-57
+102            android:label="@string/app_widget2x2" >
+102-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:91:13-50
+103            <intent-filter>
+103-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:92:13-96:29
+104                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+104-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:93:17-84
+104-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:93:25-81
+105                <action android:name="android.appwidget.action.APPWIDGET_DELETED" />
+105-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:94:17-85
+105-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:94:25-82
+106                <action android:name="android.intent.action.PRIVACY_MODE_CHANGED" />
+106-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:95:17-85
+106-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:95:25-82
+107            </intent-filter>
+108
+109            <meta-data
+109-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:98:13-100:58
+110                android:name="android.appwidget.provider"
+110-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:99:17-58
+111                android:resource="@xml/widget_2x_info" />
+111-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:100:17-55
+112        </receiver>
+113        <receiver
+113-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:102:9-115:20
+114            android:name="net.micode.notes.widget.NoteWidgetProvider_4x"
+114-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:103:13-57
+115            android:label="@string/app_widget4x4" >
+115-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:104:13-50
+116            <intent-filter>
+116-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:92:13-96:29
+117                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+117-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:93:17-84
+117-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:93:25-81
+118                <action android:name="android.appwidget.action.APPWIDGET_DELETED" />
+118-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:94:17-85
+118-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:94:25-82
+119                <action android:name="android.intent.action.PRIVACY_MODE_CHANGED" />
+119-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:95:17-85
+119-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:95:25-82
+120            </intent-filter>
+121
+122            <meta-data
+122-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:98:13-100:58
+123                android:name="android.appwidget.provider"
+123-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:99:17-58
+124                android:resource="@xml/widget_4x_info" />
+124-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:100:17-55
+125        </receiver>
+126        <receiver android:name="net.micode.notes.ui.AlarmInitReceiver" >
+126-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:117:9-121:20
+126-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:117:19-55
+127            <intent-filter>
+127-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:118:13-120:29
+128                <action android:name="android.intent.action.BOOT_COMPLETED" />
+128-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:119:17-79
+128-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:119:25-76
+129            </intent-filter>
+130        </receiver>
+131        <receiver
+131-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:123:9-126:20
+132            android:name="net.micode.notes.ui.AlarmReceiver"
+132-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:124:13-61
+133            android:process=":remote" >
+133-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:125:13-38
+134        </receiver>
+135
+136        <activity
+136-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:128:9-133:20
+137            android:name="net.micode.notes.ui.AlarmAlertActivity"
+137-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:129:13-50
+138            android:label="@string/app_name"
+138-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:130:13-45
+139            android:launchMode="singleInstance"
+139-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:131:13-48
+140            android:theme="@android:style/Theme.Holo.Wallpaper.NoTitleBar" >
+140-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:132:13-75
+141        </activity>
+142        <activity
+142-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:135:9-140:20
+143            android:name="net.micode.notes.ui.NotesPreferenceActivity"
+143-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:136:13-71
+144            android:label="@string/preferences_title"
+144-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:137:13-54
+145            android:launchMode="singleTop"
+145-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:138:13-43
+146            android:theme="@android:style/Theme.Holo.Light" >
+146-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:139:13-60
+147        </activity>
+148
+149        <service
+149-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:142:9-145:19
+150            android:name="net.micode.notes.gtask.remote.GTaskSyncService"
+150-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:143:13-74
+151            android:exported="false" >
+151-->E:\flutter-project\app\Notes\Notes\src\main\AndroidManifest.xml:144:13-37
+152        </service>
+153
+154        <!-- <meta-data -->
+155        <!-- android:name="android.app.default_searchable" -->
+156        <!-- android:value=".ui.NoteEditActivity" /> -->
+157    </application>
+158
+159</manifest>
